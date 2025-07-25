@@ -107,14 +107,23 @@ For development with real-time file watching and automatic restarts:
 - `npm run lint` - Run ESLint
 - `npm run lint:fix` - Fix ESLint issues automatically
 
-## 📚 API Endpoints
+## 📚 API Documentation
 
-### Health Check
+### Interactive Documentation
+
+Your API is fully documented with **Swagger UI**!
+
+- **📖 Swagger UI**: http://localhost:3005/api/docs
+- **📄 OpenAPI JSON**: http://localhost:3005/api/docs/json
+
+### API Endpoints
+
+#### Health Check
 
 - `GET /api/health` - Detailed health information
 - `GET /api/health/ping` - Simple ping response
 
-### Quotes Management
+#### Quotes Management
 
 - `POST /api/quotes/catalog` - Create a catalog quote
 - `POST /api/quotes/custom` - Create a custom quote

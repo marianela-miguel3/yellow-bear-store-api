@@ -59,7 +59,7 @@ A Node.js REST API built with Express.js, TypeScript, and Docker for the Yellow 
 2. **Or build and run with Docker**
    ```bash
    docker build -t yellow-bear-store-api .
-   docker run -p 3000:3000 yellow-bear-store-api
+   docker run -p 3005:3005 yellow-bear-store-api
    ```
 
 ## 🏃‍♂️ Available Scripts
@@ -95,7 +95,7 @@ Create a `.env` file based on `env.example`:
 ```env
 # Server Configuration
 NODE_ENV=development
-PORT=3000
+PORT=3005
 
 # Security
 JWT_SECRET=your-super-secret-jwt-key-here
@@ -104,9 +104,6 @@ BCRYPT_ROUNDS=12
 # Database (if you add one later)
 # DATABASE_URL=postgresql://username:password@localhost:5432/database_name
 
-# External APIs (if needed)
-# STRIPE_SECRET_KEY=sk_test_...
-# SENDGRID_API_KEY=SG...
 
 # Logging
 LOG_LEVEL=info
@@ -201,7 +198,7 @@ To add new features (e.g., users, products):
    ```bash
    docker run -d \
      --name yellow-bear-api \
-     -p 3000:3000 \
+     -p 3005:3005 \
      -e NODE_ENV=production \
      yellow-bear-store-api:production
    ```

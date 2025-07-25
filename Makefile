@@ -51,7 +51,7 @@ docker-build:
 	docker build -t yellow-bear-store-api .
 
 docker-run:
-	docker run -d --name yellow-bear-api -p 3000:3000 yellow-bear-store-api
+	docker run -d --name yellow-bear-api -p 3005:3005 yellow-bear-store-api
 
 docker-stop:
 	docker stop yellow-bear-api || true

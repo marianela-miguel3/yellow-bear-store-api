@@ -3,7 +3,7 @@
 ## Base URL
 
 ```
-http://localhost:3000/api
+http://localhost:3005/api
 ```
 
 ## Authentication
@@ -339,13 +339,13 @@ You can test the API using curl, Postman, or any HTTP client:
 
 ```bash
 # Health check
-curl http://localhost:3000/api/health
+curl http://localhost:3005/api/health
 
 # Simple ping
-curl http://localhost:3000/api/health/ping
+curl http://localhost:3005/api/health/ping
 
 # Create catalog quote
-curl -X POST http://localhost:3000/api/quotes/catalog \
+curl -X POST http://localhost:3005/api/quotes/catalog \
   -H "Content-Type: application/json" \
   -d '{
     "catalogId": 123,
@@ -355,8 +355,8 @@ curl -X POST http://localhost:3000/api/quotes/catalog \
   }'
 
 # Get quotes
-curl http://localhost:3000/api/quotes?type=catalog&page=1&limit=10
+curl http://localhost:3005/api/quotes?type=catalog&page=1&limit=10
 
 # API info
-curl http://localhost:3000/api
+curl http://localhost:3005/api
 ```

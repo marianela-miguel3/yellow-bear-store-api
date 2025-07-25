@@ -14,6 +14,10 @@ help:
 	@echo "  docker-run  - Run Docker container"
 	@echo "  docker-stop - Stop Docker container"
 	@echo "  docker-clean - Remove Docker container and image"
+	@echo "  docker-compose-dev-up - Start development environment with live reload"
+	@echo "  docker-compose-dev-down - Stop development environment"
+	@echo "  docker-compose-dev-logs - View development logs"
+	@echo "  docker-compose-dev-shell - Access development container shell"
 
 # Install dependencies
 install:
@@ -51,7 +55,7 @@ docker-build:
 	docker build -t yellow-bear-store-api .
 
 docker-run:
-	docker run -d --name yellow-bear-api -p 3000:3000 yellow-bear-store-api
+	docker run -d --name yellow-bear-api -p 3005:3005 yellow-bear-store-api
 
 docker-stop:
 	docker stop yellow-bear-api || true
@@ -68,4 +72,17 @@ docker-compose-down:
 	docker-compose down
 
 docker-compose-logs:
-	docker-compose logs -f 
+	docker-compose logs -f
+
+# Docker Compose Development commands
+docker-compose-dev-up:
+	docker-compose -f docker-compose.dev.yml up --build
+
+docker-compose-dev-down:
+	docker-compose -f docker-compose.dev.yml down
+
+docker-compose-dev-logs:
+	docker-compose -f docker-compose.dev.yml logs -f
+
+docker-compose-dev-shell:
+	docker-compose -f docker-compose.dev.yml exec api sh 

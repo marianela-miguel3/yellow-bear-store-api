@@ -50,6 +50,8 @@ A Node.js REST API built with Express.js, TypeScript, and Docker for the Yellow 
 
 ### Docker Deployment
 
+#### Production Deployment
+
 1. **Build and run with Docker Compose**
 
    ```bash
@@ -59,8 +61,43 @@ A Node.js REST API built with Express.js, TypeScript, and Docker for the Yellow 
 2. **Or build and run with Docker**
    ```bash
    docker build -t yellow-bear-store-api .
-   docker run -p 3000:3000 yellow-bear-store-api
+   docker run -p 3005:3005 yellow-bear-store-api
    ```
+
+#### Development with Live Reload
+
+For development with real-time file watching and automatic restarts:
+
+1. **Start development environment**
+
+   ```bash
+   make docker-compose-dev-up
+   ```
+
+2. **View logs**
+
+   ```bash
+   make docker-compose-dev-logs
+   ```
+
+3. **Access container shell**
+
+   ```bash
+   make docker-compose-dev-shell
+   ```
+
+4. **Stop development environment**
+   ```bash
+   make docker-compose-dev-down
+   ```
+
+**Benefits of Development Mode:**
+
+- ✅ Live reload on file changes
+- ✅ TypeScript compilation on-the-fly
+- ✅ Volume binding for real-time development
+- ✅ Hot reload with nodemon
+- ✅ All changes in your local `src/` folder are immediately reflected in the container
 
 ## 🏃‍♂️ Available Scripts
 
@@ -95,7 +132,7 @@ Create a `.env` file based on `env.example`:
 ```env
 # Server Configuration
 NODE_ENV=development
-PORT=3000
+PORT=3005
 
 # Security
 JWT_SECRET=your-super-secret-jwt-key-here
@@ -104,9 +141,6 @@ BCRYPT_ROUNDS=12
 # Database (if you add one later)
 # DATABASE_URL=postgresql://username:password@localhost:5432/database_name
 
-# External APIs (if needed)
-# STRIPE_SECRET_KEY=sk_test_...
-# SENDGRID_API_KEY=SG...
 
 # Logging
 LOG_LEVEL=info
@@ -201,7 +235,7 @@ To add new features (e.g., users, products):
    ```bash
    docker run -d \
      --name yellow-bear-api \
-     -p 3000:3000 \
+     -p 3005:3005 \
      -e NODE_ENV=production \
      yellow-bear-store-api:production
    ```

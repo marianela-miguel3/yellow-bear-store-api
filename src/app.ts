@@ -13,7 +13,8 @@ import notFoundHandler from "./middleware/notFoundHandler";
 dotenv.config();
 
 const app: Application = express();
-const PORT: number = parseInt(process.env["PORT"] || "3000", 10);
+const PORT: number = parseInt(process.env["PORT"] || "3005", 10);
+const NODE_ENV: string = process.env["NODE_ENV"] || "development";
 
 // Security middleware
 app.use(helmet());
@@ -22,9 +23,9 @@ app.use(helmet());
 app.use(
   cors({
     origin:
-      process.env["NODE_ENV"] === "production"
+      NODE_ENV === "production"
         ? ["https://yourdomain.com"]
-        : ["http://localhost:3000", "http://localhost:3001"],
+        : [`http://localhost:${PORT}`],
     credentials: true,
   })
 );
@@ -41,7 +42,7 @@ app.use("/api/", limiter);
 app.use(compression());
 
 // Logging middleware
-if (process.env["NODE_ENV"] !== "test") {
+if (NODE_ENV !== "test") {
   app.use(morgan("combined"));
 }
 
@@ -59,12 +60,11 @@ app.use(notFoundHandler);
 app.use(errorHandler);
 
 // Start server
-if (process.env["NODE_ENV"] !== "test") {
-  app.listen(PORT, () => {
-    console.log(`🚀 Server is running on port ${PORT}`);
-    console.log(`📊 Health check: http://localhost:${PORT}/health`);
-    console.log(`🌍 Environment: ${process.env["NODE_ENV"]}`);
-  });
-}
+app.listen(PORT, () => {
+  console.log(`🌍 Hello World!`);
+  console.log(`🚀 Server is running on port ${PORT}`);
+  console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
+  console.log(`🌍 Environment: ${NODE_ENV}`);
+});
 
 export default app;

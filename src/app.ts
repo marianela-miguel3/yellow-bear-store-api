@@ -61,6 +61,7 @@ app.use(errorHandler);
 
 // Start server
 app.listen(PORT, () => {
+  console.log(`🌍 Hello World!`);
   console.log(`🚀 Server is running on port ${PORT}`);
   console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
   console.log(`🌍 Environment: ${NODE_ENV}`);

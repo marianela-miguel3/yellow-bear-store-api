@@ -50,6 +50,8 @@ A Node.js REST API built with Express.js, TypeScript, and Docker for the Yellow 
 
 ### Docker Deployment
 
+#### Production Deployment
+
 1. **Build and run with Docker Compose**
 
    ```bash
@@ -61,6 +63,41 @@ A Node.js REST API built with Express.js, TypeScript, and Docker for the Yellow 
    docker build -t yellow-bear-store-api .
    docker run -p 3005:3005 yellow-bear-store-api
    ```
+
+#### Development with Live Reload
+
+For development with real-time file watching and automatic restarts:
+
+1. **Start development environment**
+
+   ```bash
+   make docker-compose-dev-up
+   ```
+
+2. **View logs**
+
+   ```bash
+   make docker-compose-dev-logs
+   ```
+
+3. **Access container shell**
+
+   ```bash
+   make docker-compose-dev-shell
+   ```
+
+4. **Stop development environment**
+   ```bash
+   make docker-compose-dev-down
+   ```
+
+**Benefits of Development Mode:**
+
+- ✅ Live reload on file changes
+- ✅ TypeScript compilation on-the-fly
+- ✅ Volume binding for real-time development
+- ✅ Hot reload with nodemon
+- ✅ All changes in your local `src/` folder are immediately reflected in the container
 
 ## 🏃‍♂️ Available Scripts
 

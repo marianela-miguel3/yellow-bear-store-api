@@ -40,13 +40,13 @@ export interface Coordinates {
 }
 
 export interface Address {
-  address: string;
-  coordinates?: Coordinates;
+  address?: string;
+  coordinates?: Coordinates | undefined;
 }
 
 export interface ContactInfo {
-  email?: string;
-  phoneNumber?: string;
+  email?: string | undefined;
+  phoneNumber?: string | undefined;
 }
 
 export interface ReferencePrice {
@@ -55,17 +55,16 @@ export interface ReferencePrice {
   referencePriceFileURL?: string;
 }
 
+import { PAYMENT_METHODS } from "../constants";
+
 export type PaymentMethod =
-  | "LOCAL_CASH"
-  | "OFFSHORE_CASH"
-  | "WIRE"
-  | "LETTER_OFF_CREDIT";
+  (typeof PAYMENT_METHODS)[keyof typeof PAYMENT_METHODS];
 
 export interface ProductDetails {
-  name?: string;
-  url?: string;
-  description?: string;
-  serialNumber?: string;
+  name: string;
+  description: string;
+  url?: string | undefined;
+  serialNumber?: string | undefined;
 }
 
 // Base Quote interface with common fields
@@ -93,14 +92,16 @@ export interface CatalogQuote extends BaseQuote {
 // Custom Quote
 export interface CustomQuote extends BaseQuote {
   productDetails: ProductDetails;
+  hasReferencePrice: boolean;
+  referencePriceDescription?: string;
+  referencePriceFileURL?: string;
 }
 
-// Quote Response
-export interface QuoteResponse {
+// Catalog Quote Response
+export interface CatalogQuoteResponse {
   id: number;
-  type: "catalog" | "custom";
-  catalogId?: number;
-  productDetails?: ProductDetails;
+  type: "catalog";
+  catalogId: number;
   fullName?: string;
   companyName?: string;
   cuilCuit?: string;
@@ -114,6 +115,28 @@ export interface QuoteResponse {
   createdAt: string;
   updatedAt?: string;
 }
+
+// Custom Quote Response
+export interface CustomQuoteResponse {
+  id: number;
+  type: "custom";
+  productDetails: ProductDetails;
+  fullName?: string;
+  companyName?: string;
+  cuilCuit?: string;
+  address?: Address;
+  hasReferencePrice: boolean;
+  referencePriceDescription?: string;
+  referencePriceFileURL?: string;
+  paymentMethod?: PaymentMethod;
+  contactInfo: ContactInfo;
+  comments: string;
+  createdAt: string;
+  updatedAt?: string;
+}
+
+// Union type for both quote responses
+export type QuoteResponse = CatalogQuoteResponse | CustomQuoteResponse;
 
 // Quote Filters
 export interface QuoteFilters extends PaginationParams {

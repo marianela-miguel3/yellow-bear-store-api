@@ -5,9 +5,12 @@ import {
   CustomQuote,
   QuoteFilters,
   ApiResponse,
+  CatalogQuoteResponse,
+  CustomQuoteResponse,
   QuoteResponse,
   QuotesResponse,
 } from "../types";
+import { SUCCESS_MESSAGES } from "../constants";
 
 export const createCatalogQuote = async (
   req: Request,
@@ -19,10 +22,10 @@ export const createCatalogQuote = async (
 
     const newQuote = await quoteModel.createCatalogQuote(quoteData);
 
-    const response: ApiResponse<QuoteResponse> = {
+    const response: ApiResponse<CatalogQuoteResponse> = {
       success: true,
       data: newQuote,
-      message: "Catalog quote created successfully",
+      message: SUCCESS_MESSAGES.QUOTE.CREATED,
     };
 
     res.status(201).json(response);
@@ -51,10 +54,10 @@ export const createCustomQuote = async (
 
     const newQuote = await quoteModel.createCustomQuote(quoteData);
 
-    const response: ApiResponse<QuoteResponse> = {
+    const response: ApiResponse<CustomQuoteResponse> = {
       success: true,
       data: newQuote,
-      message: "Custom quote created successfully",
+      message: SUCCESS_MESSAGES.QUOTE.CREATED,
     };
 
     res.status(201).json(response);
@@ -108,7 +111,7 @@ export const getQuotes = async (req: Request, res: Response): Promise<void> => {
     const response: ApiResponse<QuotesResponse> = {
       success: true,
       data: result,
-      message: "Quotes retrieved successfully",
+      message: SUCCESS_MESSAGES.QUOTE.LIST_RETRIEVED,
     };
 
     res.status(200).json(response);
@@ -155,7 +158,7 @@ export const getQuoteById = async (
     const response: ApiResponse<QuoteResponse> = {
       success: true,
       data: quote,
-      message: "Quote retrieved successfully",
+      message: SUCCESS_MESSAGES.QUOTE.RETRIEVED,
     };
 
     res.status(200).json(response);
@@ -171,7 +174,7 @@ export const getQuoteById = async (
   }
 };
 
-export const updateQuote = async (
+export const updateCatalogQuote = async (
   req: Request,
   res: Response
 ): Promise<void> => {
@@ -189,30 +192,84 @@ export const updateQuote = async (
 
     const quoteData = req.body;
     const quoteModel = new QuoteModel();
-    const updatedQuote = await quoteModel.updateQuote(id, quoteData);
+    const updatedQuote = await quoteModel.updateCatalogQuote(id, quoteData);
 
     if (!updatedQuote) {
       const response: ApiResponse<null> = {
         success: false,
-        error: "Quote not found",
+        error: "Catalog quote not found",
       };
       res.status(404).json(response);
       return;
     }
 
-    const response: ApiResponse<QuoteResponse> = {
+    const response: ApiResponse<CatalogQuoteResponse> = {
       success: true,
       data: updatedQuote,
-      message: "Quote updated successfully",
+      message: SUCCESS_MESSAGES.QUOTE.UPDATED,
     };
 
     res.status(200).json(response);
   } catch (error) {
-    console.error("Error updating quote:", error);
+    console.error("Error updating catalog quote:", error);
 
     const response: ApiResponse<null> = {
       success: false,
-      error: error instanceof Error ? error.message : "Failed to update quote",
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to update catalog quote",
+    };
+
+    res.status(500).json(response);
+  }
+};
+
+export const updateCustomQuote = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const id = parseInt(req.params["id"] || "");
+
+    if (isNaN(id)) {
+      const response: ApiResponse<null> = {
+        success: false,
+        error: "Invalid quote ID",
+      };
+      res.status(400).json(response);
+      return;
+    }
+
+    const quoteData = req.body;
+    const quoteModel = new QuoteModel();
+    const updatedQuote = await quoteModel.updateCustomQuote(id, quoteData);
+
+    if (!updatedQuote) {
+      const response: ApiResponse<null> = {
+        success: false,
+        error: "Custom quote not found",
+      };
+      res.status(404).json(response);
+      return;
+    }
+
+    const response: ApiResponse<CustomQuoteResponse> = {
+      success: true,
+      data: updatedQuote,
+      message: SUCCESS_MESSAGES.QUOTE.UPDATED,
+    };
+
+    res.status(200).json(response);
+  } catch (error) {
+    console.error("Error updating custom quote:", error);
+
+    const response: ApiResponse<null> = {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to update custom quote",
     };
 
     res.status(500).json(response);
@@ -249,7 +306,7 @@ export const deleteQuote = async (
 
     const response: ApiResponse<null> = {
       success: true,
-      message: "Quote deleted successfully",
+      message: SUCCESS_MESSAGES.QUOTE.DELETED,
     };
 
     res.status(200).json(response);

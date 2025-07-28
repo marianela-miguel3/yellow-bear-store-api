@@ -4,7 +4,8 @@ import {
   createCustomQuote,
   getQuotes,
   getQuoteById,
-  updateQuote,
+  updateCatalogQuote,
+  updateCustomQuote,
   deleteQuote,
 } from "../controllers/quoteController";
 
@@ -22,8 +23,11 @@ router.get("/", getQuotes);
 // GET /api/quotes/:id - Get quote by ID
 router.get("/:id", getQuoteById);
 
-// PUT /api/quotes/:id - Update quote
-router.put("/:id", updateQuote);
+// PUT /api/quotes/catalog/:id - Update catalog quote
+router.put("/catalog/:id", updateCatalogQuote);
+
+// PUT /api/quotes/custom/:id - Update custom quote
+router.put("/custom/:id", updateCustomQuote);
 
 // DELETE /api/quotes/:id - Delete quote
 router.delete("/:id", deleteQuote);

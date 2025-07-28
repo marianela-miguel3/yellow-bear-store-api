@@ -5,9 +5,11 @@ import {
   CustomQuote,
   QuoteFilters,
   ApiResponse,
-  QuoteResponse,
+  CatalogQuoteResponse,
+  CustomQuoteResponse,
   QuotesResponse,
 } from "../types";
+import { SUCCESS_MESSAGES } from "../constants";
 
 export const createCatalogQuote = async (
   req: Request,
@@ -19,10 +21,10 @@ export const createCatalogQuote = async (
 
     const newQuote = await quoteModel.createCatalogQuote(quoteData);
 
-    const response: ApiResponse<QuoteResponse> = {
+    const response: ApiResponse<CatalogQuoteResponse> = {
       success: true,
       data: newQuote,
-      message: "Catalog quote created successfully",
+      message: SUCCESS_MESSAGES.QUOTE.CREATED,
     };
 
     res.status(201).json(response);
@@ -51,10 +53,10 @@ export const createCustomQuote = async (
 
     const newQuote = await quoteModel.createCustomQuote(quoteData);
 
-    const response: ApiResponse<QuoteResponse> = {
+    const response: ApiResponse<CustomQuoteResponse> = {
       success: true,
       data: newQuote,
-      message: "Custom quote created successfully",
+      message: SUCCESS_MESSAGES.QUOTE.CREATED,
     };
 
     res.status(201).json(response);
@@ -108,7 +110,7 @@ export const getQuotes = async (req: Request, res: Response): Promise<void> => {
     const response: ApiResponse<QuotesResponse> = {
       success: true,
       data: result,
-      message: "Quotes retrieved successfully",
+      message: SUCCESS_MESSAGES.QUOTE.LIST_RETRIEVED,
     };
 
     res.status(200).json(response);
@@ -152,10 +154,10 @@ export const getQuoteById = async (
       return;
     }
 
-    const response: ApiResponse<QuoteResponse> = {
+    const response: ApiResponse<CatalogQuoteResponse> = {
       success: true,
       data: quote,
-      message: "Quote retrieved successfully",
+      message: SUCCESS_MESSAGES.QUOTE.RETRIEVED,
     };
 
     res.status(200).json(response);
@@ -200,10 +202,10 @@ export const updateQuote = async (
       return;
     }
 
-    const response: ApiResponse<QuoteResponse> = {
+    const response: ApiResponse<CatalogQuoteResponse> = {
       success: true,
       data: updatedQuote,
-      message: "Quote updated successfully",
+      message: SUCCESS_MESSAGES.QUOTE.UPDATED,
     };
 
     res.status(200).json(response);
@@ -249,7 +251,7 @@ export const deleteQuote = async (
 
     const response: ApiResponse<null> = {
       success: true,
-      message: "Quote deleted successfully",
+      message: SUCCESS_MESSAGES.QUOTE.DELETED,
     };
 
     res.status(200).json(response);

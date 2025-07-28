@@ -271,11 +271,40 @@ Get a specific quote by ID.
 }
 ```
 
-#### PUT /quotes/:id
+#### PUT /quotes/catalog/:id
 
-Update a quote.
+Update a catalog quote.
 
-**Request Body:** (Same structure as POST, but all fields are optional)
+**Request Body:** (Same structure as POST /quotes/catalog, but all fields are optional)
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "type": "catalog",
+    "catalogId": 123,
+    "fullName": "Updated John Doe",
+    "companyName": "Updated Company",
+    "hasReferencePrice": true,
+    "contactInfo": {
+      "email": "updated@example.com"
+    },
+    "comments": "Updated comments",
+    "createdAt": "2025-07-23T18:54:44.595Z",
+    "updatedAt": "2025-07-23T19:00:00.000Z"
+  },
+  "message": "Quote updated successfully"
+}
+```
+
+#### PUT /quotes/custom/:id
+
+Update a custom quote.
+
+**Request Body:** (Same structure as POST /quotes/custom, but all fields are optional)
 
 **Response:**
 

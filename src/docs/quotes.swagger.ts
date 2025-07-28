@@ -255,7 +255,7 @@
  *         name: paymentMethod
  *         schema:
  *           type: string
- *           enum: [${PAYMENT_METHODS.LOCAL_CASH}, ${PAYMENT_METHODS.OFFSHORE_CASH}, ${PAYMENT_METHODS.WIRE}, ${PAYMENT_METHODS.LETTER_OFF_CREDIT}]
+ *           enum: ["LOCAL_CASH", "OFFSHORE_CASH", "WIRE", "LETTER_OFF_CREDIT"]
  *         description: Filter by payment method
  *       - in: query
  *         name: dateFrom
@@ -365,61 +365,7 @@
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/ErrorResponse'
- *   put:
- *     summary: Update a quote
- *     description: Update an existing quote with new information
- *     tags: [Quotes]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
- *         description: Quote ID
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             oneOf:
- *               - $ref: '#/components/schemas/CatalogQuoteResponse'
- *               - $ref: '#/components/schemas/CustomQuoteResponse'
- *     responses:
- *       200:
- *         description: Quote updated successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 data:
- *                   oneOf:
- *                     - $ref: '#/components/schemas/CatalogQuoteResponse'
- *                     - $ref: '#/components/schemas/CustomQuoteResponse'
- *                 message:
- *                   type: string
- *                   example: "Quote updated successfully"
- *       400:
- *         description: Invalid quote ID
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ErrorResponse'
- *       404:
- *         description: Quote not found
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ErrorResponse'
- *       500:
- *         description: Internal server error
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/ErrorResponse'
+
  *   delete:
  *     summary: Delete a quote
  *     description: Remove a quote from the system
@@ -453,6 +399,239 @@
  *               $ref: '#/components/schemas/ErrorResponse'
  *       404:
  *         description: Quote not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+
+/**
+ * @swagger
+ * /api/quotes/catalog/{id}:
+ *   put:
+ *     summary: Update a catalog quote
+ *     description: Update an existing catalog quote by ID
+ *     tags: [Quotes]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Catalog quote ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               catalogId:
+ *                 type: integer
+ *                 example: 123
+ *               fullName:
+ *                 type: string
+ *                 example: "Updated John Doe"
+ *               companyName:
+ *                 type: string
+ *                 example: "Updated Company"
+ *               cuilCuit:
+ *                 type: string
+ *                 example: "20-12345678-9"
+ *               address:
+ *                 type: object
+ *                 properties:
+ *                   address:
+ *                     type: string
+ *                     example: "Updated Address"
+ *                   coordinates:
+ *                     type: object
+ *                     properties:
+ *                       lat:
+ *                         type: number
+ *                         example: -34.6037
+ *                       lng:
+ *                         type: number
+ *                         example: -58.3816
+ *               hasReferencePrice:
+ *                 type: boolean
+ *                 example: true
+ *               referencePriceDescription:
+ *                 type: string
+ *                 example: "Updated reference price"
+ *               referencePriceFileURL:
+ *                 type: string
+ *                 example: "https://example.com/updated-file.pdf"
+ *               paymentMethod:
+ *                 type: string
+ *                 enum: ["LOCAL_CASH", "OFFSHORE_CASH", "WIRE", "LETTER_OFF_CREDIT"]
+ *                 example: "WIRE"
+ *               contactInfo:
+ *                 type: object
+ *                 properties:
+ *                   email:
+ *                     type: string
+ *                     format: email
+ *                     example: "updated@example.com"
+ *                   phoneNumber:
+ *                     type: string
+ *                     example: "+54 11 9876-5432"
+ *               comments:
+ *                 type: string
+ *                 example: "Updated comments"
+ *     responses:
+ *       200:
+ *         description: Catalog quote updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   $ref: '#/components/schemas/CatalogQuoteResponse'
+ *                 message:
+ *                   type: string
+ *                   example: "Quote updated successfully"
+ *       400:
+ *         description: Bad request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Catalog quote not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ */
+
+/**
+ * @swagger
+ * /api/quotes/custom/{id}:
+ *   put:
+ *     summary: Update a custom quote
+ *     description: Update an existing custom quote by ID
+ *     tags: [Quotes]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: Custom quote ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               productDetails:
+ *                 type: object
+ *                 required: ["name", "description"]
+ *                 properties:
+ *                   name:
+ *                     type: string
+ *                     example: "Updated Custom Product"
+ *                   url:
+ *                     type: string
+ *                     example: "https://example.com/updated-product"
+ *                   description:
+ *                     type: string
+ *                     example: "Updated product description"
+ *                   serialNumber:
+ *                     type: string
+ *                     example: "YB-2025-002"
+ *               fullName:
+ *                 type: string
+ *                 example: "Updated Jane Smith"
+ *               companyName:
+ *                 type: string
+ *                 example: "Updated Tech Solutions"
+ *               cuilCuit:
+ *                 type: string
+ *                 example: "30-98765432-1"
+ *               address:
+ *                 type: object
+ *                 properties:
+ *                   address:
+ *                     type: string
+ *                     example: "Updated Address"
+ *                   coordinates:
+ *                     type: object
+ *                     properties:
+ *                       lat:
+ *                         type: number
+ *                         example: -34.6037
+ *                       lng:
+ *                         type: number
+ *                         example: -58.3816
+ *               hasReferencePrice:
+ *                 type: boolean
+ *                 example: false
+ *               referencePriceDescription:
+ *                 type: string
+ *                 example: "Updated reference price"
+ *               referencePriceFileURL:
+ *                 type: string
+ *                 example: "https://example.com/updated-file.pdf"
+ *               paymentMethod:
+ *                 type: string
+ *                 enum: ["LOCAL_CASH", "OFFSHORE_CASH", "WIRE", "LETTER_OFF_CREDIT"]
+ *                 example: "LOCAL_CASH"
+ *               contactInfo:
+ *                 type: object
+ *                 properties:
+ *                   email:
+ *                     type: string
+ *                     format: email
+ *                     example: "updated@example.com"
+ *                   phoneNumber:
+ *                     type: string
+ *                     example: "+54 11 9876-5432"
+ *               comments:
+ *                 type: string
+ *                 example: "Updated comments"
+ *     responses:
+ *       200:
+ *         description: Custom quote updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   $ref: '#/components/schemas/CustomQuoteResponse'
+ *                 message:
+ *                   type: string
+ *                   example: "Quote updated successfully"
+ *       400:
+ *         description: Bad request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
+ *       404:
+ *         description: Custom quote not found
  *         content:
  *           application/json:
  *             schema:

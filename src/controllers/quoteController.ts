@@ -7,6 +7,7 @@ import {
   ApiResponse,
   CatalogQuoteResponse,
   CustomQuoteResponse,
+  QuoteResponse,
   QuotesResponse,
 } from "../types";
 import { SUCCESS_MESSAGES } from "../constants";
@@ -154,7 +155,7 @@ export const getQuoteById = async (
       return;
     }
 
-    const response: ApiResponse<CatalogQuoteResponse> = {
+    const response: ApiResponse<QuoteResponse> = {
       success: true,
       data: quote,
       message: SUCCESS_MESSAGES.QUOTE.RETRIEVED,
@@ -173,7 +174,7 @@ export const getQuoteById = async (
   }
 };
 
-export const updateQuote = async (
+export const updateCatalogQuote = async (
   req: Request,
   res: Response
 ): Promise<void> => {
@@ -191,12 +192,12 @@ export const updateQuote = async (
 
     const quoteData = req.body;
     const quoteModel = new QuoteModel();
-    const updatedQuote = await quoteModel.updateQuote(id, quoteData);
+    const updatedQuote = await quoteModel.updateCatalogQuote(id, quoteData);
 
     if (!updatedQuote) {
       const response: ApiResponse<null> = {
         success: false,
-        error: "Quote not found",
+        error: "Catalog quote not found",
       };
       res.status(404).json(response);
       return;
@@ -210,11 +211,65 @@ export const updateQuote = async (
 
     res.status(200).json(response);
   } catch (error) {
-    console.error("Error updating quote:", error);
+    console.error("Error updating catalog quote:", error);
 
     const response: ApiResponse<null> = {
       success: false,
-      error: error instanceof Error ? error.message : "Failed to update quote",
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to update catalog quote",
+    };
+
+    res.status(500).json(response);
+  }
+};
+
+export const updateCustomQuote = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const id = parseInt(req.params["id"] || "");
+
+    if (isNaN(id)) {
+      const response: ApiResponse<null> = {
+        success: false,
+        error: "Invalid quote ID",
+      };
+      res.status(400).json(response);
+      return;
+    }
+
+    const quoteData = req.body;
+    const quoteModel = new QuoteModel();
+    const updatedQuote = await quoteModel.updateCustomQuote(id, quoteData);
+
+    if (!updatedQuote) {
+      const response: ApiResponse<null> = {
+        success: false,
+        error: "Custom quote not found",
+      };
+      res.status(404).json(response);
+      return;
+    }
+
+    const response: ApiResponse<CustomQuoteResponse> = {
+      success: true,
+      data: updatedQuote,
+      message: SUCCESS_MESSAGES.QUOTE.UPDATED,
+    };
+
+    res.status(200).json(response);
+  } catch (error) {
+    console.error("Error updating custom quote:", error);
+
+    const response: ApiResponse<null> = {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Failed to update custom quote",
     };
 
     res.status(500).json(response);

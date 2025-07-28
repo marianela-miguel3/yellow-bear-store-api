@@ -19,6 +19,10 @@ import {
 } from "../validations/quoteValidations";
 import { QUOTE_TYPES } from "../constants";
 
+// TODO: Remove this after the database is implemented
+const mockCatalogQuotes: CatalogQuoteResponse[] = [];
+const mockCustomQuotes: CustomQuoteResponse[] = [];
+
 export class QuoteModel extends BaseModel<QuoteResponse> {
   protected tableName = "quotes";
 
@@ -50,6 +54,8 @@ export class QuoteModel extends BaseModel<QuoteResponse> {
           paymentMethod: validatedData.paymentMethod,
         }),
       };
+      // TODO: Remove this after the database is implemented
+      mockCatalogQuotes.push(newQuote);
 
       console.log("Catalog quote created:", newQuote);
       return newQuote;
@@ -94,6 +100,9 @@ export class QuoteModel extends BaseModel<QuoteResponse> {
         }),
       };
 
+      // TODO: Remove this after the database is implemented
+      mockCustomQuotes.push(newQuote);
+
       console.log("Custom quote created:", newQuote);
       return newQuote;
     } catch (error) {
@@ -113,41 +122,15 @@ export class QuoteModel extends BaseModel<QuoteResponse> {
       // 2. Execute query with pagination
       // 3. Return results with pagination info
 
-      // For now, return mock data
-      const mockQuotes: CatalogQuoteResponse[] = [
-        {
-          id: 1,
-          type: "catalog",
-          catalogId: 123,
-          fullName: "John Doe",
-          companyName: "Test Company",
-          hasReferencePrice: false,
-          contactInfo: { email: "john@example.com" },
-          comments: "Test catalog quote",
-          createdAt: new Date().toISOString(),
-        },
-        {
-          id: 2,
-          type: "catalog",
-          catalogId: 123,
-          fullName: "John Doe",
-          companyName: "Test Company",
-          hasReferencePrice: false,
-          contactInfo: { email: "john@example.com" },
-          comments: "Test catalog quote",
-          createdAt: new Date().toISOString(),
-        },
-      ];
-
       const pagination: PaginationInfo = {
         currentPage: validatedFilters.page,
         totalPages: 1,
-        totalItems: mockQuotes.length,
+        totalItems: mockCatalogQuotes.length,
         itemsPerPage: validatedFilters.limit,
       };
 
       return {
-        quotes: mockQuotes,
+        quotes: mockCatalogQuotes,
         pagination,
       };
     } catch (error) {
@@ -157,25 +140,21 @@ export class QuoteModel extends BaseModel<QuoteResponse> {
   }
 
   // Get quote by ID
-  async getQuoteById(id: number): Promise<CatalogQuoteResponse | null> {
+  async getQuoteById(id: number): Promise<QuoteResponse | null> {
     try {
       // In a real implementation, you would:
       // 1. Query the database for the specific quote
       // 2. Return the quote or null if not found
 
       // For now, return mock data
-      if (id === 1) {
-        return {
-          id: 1,
-          type: "catalog",
-          catalogId: 123,
-          fullName: "John Doe",
-          companyName: "Test Company",
-          hasReferencePrice: false,
-          contactInfo: { email: "john@example.com" },
-          comments: "Test catalog quote",
-          createdAt: new Date().toISOString(),
-        };
+      const quote = mockCatalogQuotes.find((quote) => quote.id === id);
+      if (quote) {
+        return quote;
+      }
+
+      const customQuote = mockCustomQuotes.find((quote) => quote.id === id);
+      if (customQuote) {
+        return customQuote;
       }
 
       return null;
@@ -185,8 +164,8 @@ export class QuoteModel extends BaseModel<QuoteResponse> {
     }
   }
 
-  // Update quote
-  async updateQuote(
+  // Update catalog quote
+  async updateCatalogQuote(
     id: number,
     quoteData: unknown
   ): Promise<CatalogQuoteResponse | null> {
@@ -195,11 +174,12 @@ export class QuoteModel extends BaseModel<QuoteResponse> {
       const validatedData = this.validateQuoteUpdate(quoteData);
 
       // In a real implementation, you would:
-      // 1. Update the quote in the database
-      // 2. Return the updated quote or null if not found
+      // 1. Check if the quote exists and is a catalog quote
+      // 2. Update the quote in the database
+      // 3. Return the updated quote or null if not found
 
       const existingQuote = await this.getQuoteById(id);
-      if (!existingQuote) {
+      if (!existingQuote || existingQuote.type !== QUOTE_TYPES.CATALOG) {
         return null;
       }
 
@@ -209,10 +189,51 @@ export class QuoteModel extends BaseModel<QuoteResponse> {
         updatedAt: new Date().toISOString(),
       } as CatalogQuoteResponse;
 
-      console.log("Quote updated:", updatedQuote);
+      // TODO: Remove this after the database is implemented
+      mockCatalogQuotes[mockCatalogQuotes.indexOf(existingQuote)] =
+        updatedQuote;
+
+      console.log("Catalog quote updated:", updatedQuote);
+
       return updatedQuote;
     } catch (error) {
-      console.error("Failed to update quote:", error);
+      console.error("Failed to update catalog quote:", error);
+      throw error;
+    }
+  }
+
+  // Update custom quote
+  async updateCustomQuote(
+    id: number,
+    quoteData: unknown
+  ): Promise<CustomQuoteResponse | null> {
+    try {
+      // Validate update data using Zod
+      const validatedData = this.validateQuoteUpdate(quoteData);
+
+      // In a real implementation, you would:
+      // 1. Check if the quote exists and is a custom quote
+      // 2. Update the quote in the database
+      // 3. Return the updated quote or null if not found
+
+      const existingQuote = await this.getQuoteById(id);
+      if (!existingQuote || existingQuote.type !== QUOTE_TYPES.CUSTOM) {
+        return null;
+      }
+
+      const updatedQuote = {
+        ...existingQuote,
+        ...validatedData,
+        updatedAt: new Date().toISOString(),
+      } as CustomQuoteResponse;
+
+      // TODO: Remove this after the database is implemented
+      mockCustomQuotes[mockCustomQuotes.indexOf(existingQuote)] = updatedQuote;
+
+      console.log("Custom quote updated:", updatedQuote);
+      return updatedQuote;
+    } catch (error) {
+      console.error("Failed to update custom quote:", error);
       throw error;
     }
   }
@@ -227,6 +248,13 @@ export class QuoteModel extends BaseModel<QuoteResponse> {
       const existingQuote = await this.getQuoteById(id);
       if (!existingQuote) {
         return false;
+      }
+
+      // TODO: Remove this after the database is implemented
+      if (existingQuote.type === QUOTE_TYPES.CATALOG) {
+        mockCatalogQuotes.splice(mockCatalogQuotes.indexOf(existingQuote), 1);
+      } else {
+        mockCustomQuotes.splice(mockCustomQuotes.indexOf(existingQuote), 1);
       }
 
       console.log("Quote deleted:", id);

@@ -129,7 +129,8 @@ Your API is fully documented with **Swagger UI**!
 - `POST /api/quotes/custom` - Create a custom quote
 - `GET /api/quotes` - Get all quotes with filters and pagination
 - `GET /api/quotes/:id` - Get a specific quote by ID
-- `PUT /api/quotes/:id` - Update a quote
+- `PUT /api/quotes/catalog/:id` - Update a catalog quote
+- `PUT /api/quotes/custom/:id` - Update a custom quote
 - `DELETE /api/quotes/:id` - Delete a quote
 
 ## 🔧 Configuration

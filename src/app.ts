@@ -9,6 +9,7 @@ import dotenv from "dotenv";
 import routes from "./routes/index";
 import errorHandler from "./middleware/errorHandler";
 import notFoundHandler from "./middleware/notFoundHandler";
+import { connectDatabase, disconnectDatabase } from "./config/prisma";
 
 dotenv.config();
 
@@ -59,13 +60,41 @@ app.use(notFoundHandler);
 // Error handling middleware
 app.use(errorHandler);
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`🌍 Hello World!`);
-  console.log(`🚀 Server is running on port ${PORT}`);
-  console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
-  console.log(`📊 Swagger: http://localhost:${PORT}/api/docs`);
-  console.log(`🌍 Environment: ${NODE_ENV}`);
+// Database connection and server startup
+const startServer = async (): Promise<void> => {
+  try {
+    // Connect to database
+    await connectDatabase();
+
+    // Start server
+    app.listen(PORT, () => {
+      console.log(`🌍 Hello World!`);
+      console.log(`🚀 Server is running on port ${PORT}`);
+      console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
+      console.log(`📊 Swagger: http://localhost:${PORT}/api/docs`);
+      console.log(`🌍 Environment: ${NODE_ENV}`);
+      console.log(`🗄️  Database: Connected`);
+    });
+  } catch (error) {
+    console.error("❌ Failed to start server:", error);
+    process.exit(1);
+  }
+};
+
+// Graceful shutdown
+process.on("SIGINT", async () => {
+  console.log("\n🛑 Received SIGINT. Graceful shutdown...");
+  await disconnectDatabase();
+  process.exit(0);
 });
+
+process.on("SIGTERM", async () => {
+  console.log("\n🛑 Received SIGTERM. Graceful shutdown...");
+  await disconnectDatabase();
+  process.exit(0);
+});
+
+// Start the server
+startServer();
 
 export default app;

@@ -67,7 +67,7 @@ const startServer = async (): Promise<void> => {
     await connectDatabase();
 
     // Start server
-    app.listen(PORT, () => {
+    app.listen(PORT, '0.0.0.0', () => {
       console.log(`🌍 Hello World!`);
       console.log(`🚀 Server is running on port ${PORT}`);
       console.log(`📊 Health check: http://localhost:${PORT}/api/health`);

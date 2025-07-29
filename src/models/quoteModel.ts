@@ -5,19 +5,12 @@ import {
   PaginationInfo,
   CustomQuoteResponse,
   QuoteResponse,
-  ContactInfo,
+  QuoteFilters,
+  CatalogQuote,
+  CustomQuote,
 } from "../types";
-import {
-  validateCatalogQuote,
-  validateCustomQuote,
-  validateQuoteFilters,
-  validateQuoteUpdate,
-  CatalogQuoteInput,
-  CustomQuoteInput,
-  QuoteFiltersInput,
-  QuoteUpdateInput,
-} from "../validations/quoteValidations";
-import { QUOTE_TYPES } from "../constants";
+
+import { PAGINATION, QUOTE_TYPES } from "../constants";
 
 // TODO: Remove this after the database is implemented
 const mockCatalogQuotes: CatalogQuoteResponse[] = [];
@@ -26,111 +19,24 @@ const mockCustomQuotes: CustomQuoteResponse[] = [];
 export class QuoteModel extends BaseModel<QuoteResponse> {
   protected tableName = "quotes";
 
-  // Create a catalog quote
-  async createCatalogQuote(quoteData: unknown): Promise<CatalogQuoteResponse> {
-    try {
-      // Validate input data using Zod
-      const validatedData = this.validateCatalogQuote(quoteData);
-
-      // In a real implementation, you would:
-      // 1. Insert the quote data into the database
-      // 2. Return the created record with ID
-
-      const newQuote: CatalogQuoteResponse = {
-        id: Date.now(), // Simulate auto-generated ID
-        type: QUOTE_TYPES.CATALOG,
-        catalogId: validatedData.catalogId,
-        hasReferencePrice: validatedData.hasReferencePrice,
-        contactInfo: validatedData.contactInfo as ContactInfo,
-        comments: validatedData.comments,
-        createdAt: new Date().toISOString(),
-        ...(validatedData.fullName && { fullName: validatedData.fullName }),
-        ...(validatedData.companyName && {
-          companyName: validatedData.companyName,
-        }),
-        ...(validatedData.cuilCuit && { cuilCuit: validatedData.cuilCuit }),
-        ...(validatedData.address && { address: validatedData.address }),
-        ...(validatedData.paymentMethod && {
-          paymentMethod: validatedData.paymentMethod,
-        }),
-      };
-      // TODO: Remove this after the database is implemented
-      mockCatalogQuotes.push(newQuote);
-
-      console.log("Catalog quote created:", newQuote);
-      return newQuote;
-    } catch (error) {
-      console.error("Failed to create catalog quote:", error);
-      throw error;
-    }
-  }
-
-  // Create a custom quote
-  async createCustomQuote(quoteData: unknown): Promise<CustomQuoteResponse> {
-    try {
-      // Validate input data using Zod
-      const validatedData = this.validateCustomQuote(quoteData);
-
-      // In a real implementation, you would:
-      // 1. Insert the quote data into the database
-      // 2. Return the created record with ID
-
-      const newQuote: CustomQuoteResponse = {
-        id: Date.now(), // Simulate auto-generated ID
-        type: QUOTE_TYPES.CUSTOM,
-        productDetails: validatedData.productDetails,
-        hasReferencePrice: validatedData.hasReferencePrice,
-        contactInfo: validatedData.contactInfo,
-        comments: validatedData.comments,
-        createdAt: new Date().toISOString(),
-        ...(validatedData.fullName && { fullName: validatedData.fullName }),
-        ...(validatedData.companyName && {
-          companyName: validatedData.companyName,
-        }),
-        ...(validatedData.cuilCuit && { cuilCuit: validatedData.cuilCuit }),
-        ...(validatedData.address && { address: validatedData.address }),
-        ...(validatedData.referencePriceDescription && {
-          referencePriceDescription: validatedData.referencePriceDescription,
-        }),
-        ...(validatedData.referencePriceFileURL && {
-          referencePriceFileURL: validatedData.referencePriceFileURL,
-        }),
-        ...(validatedData.paymentMethod && {
-          paymentMethod: validatedData.paymentMethod,
-        }),
-      };
-
-      // TODO: Remove this after the database is implemented
-      mockCustomQuotes.push(newQuote);
-
-      console.log("Custom quote created:", newQuote);
-      return newQuote;
-    } catch (error) {
-      console.error("Failed to create custom quote:", error);
-      throw error;
-    }
-  }
-
   // Get quotes with filters and pagination
-  async getQuotes(filters: unknown): Promise<QuotesResponse> {
+  async getQuotes(filters: QuoteFilters): Promise<QuotesResponse> {
     try {
-      // Validate filters using Zod
-      const validatedFilters = this.validateQuoteFilters(filters);
-
       // In a real implementation, you would:
       // 1. Build SQL query based on filters
       // 2. Execute query with pagination
       // 3. Return results with pagination info
 
       const pagination: PaginationInfo = {
-        currentPage: validatedFilters.page,
+        currentPage: filters.page || PAGINATION.DEFAULT_PAGE,
         totalPages: 1,
         totalItems: mockCatalogQuotes.length,
-        itemsPerPage: validatedFilters.limit,
+        itemsPerPage: filters.limit || PAGINATION.DEFAULT_LIMIT,
       };
 
+      // TODO: Remove this after the database is implemented
       return {
-        quotes: mockCatalogQuotes,
+        quotes: [...mockCatalogQuotes, ...mockCustomQuotes],
         pagination,
       };
     } catch (error) {
@@ -164,15 +70,95 @@ export class QuoteModel extends BaseModel<QuoteResponse> {
     }
   }
 
+  // Create a catalog quote
+  async createCatalogQuote(
+    quoteData: CatalogQuote
+  ): Promise<CatalogQuoteResponse> {
+    try {
+      // In a real implementation, you would:
+      // 1. Insert the quote data into the database
+      // 2. Return the created record with ID
+
+      const newQuote: CatalogQuoteResponse = {
+        id: Date.now(), // Simulate auto-generated ID
+        type: QUOTE_TYPES.CATALOG,
+        catalogId: quoteData.catalogId,
+        hasReferencePrice: quoteData.hasReferencePrice,
+        contactInfo: quoteData.contactInfo,
+        comments: quoteData.comments,
+        createdAt: new Date().toISOString(),
+        ...(quoteData.fullName && { fullName: quoteData.fullName }),
+        ...(quoteData.companyName && {
+          companyName: quoteData.companyName,
+        }),
+        ...(quoteData.cuilCuit && { cuilCuit: quoteData.cuilCuit }),
+        ...(quoteData.address && { address: quoteData.address }),
+        ...(quoteData.paymentMethod && {
+          paymentMethod: quoteData.paymentMethod,
+        }),
+      };
+      // TODO: Remove this after the database is implemented
+      mockCatalogQuotes.push(newQuote);
+
+      console.log("Catalog quote created:", newQuote);
+      return newQuote;
+    } catch (error) {
+      console.error("Failed to create catalog quote:", error);
+      throw error;
+    }
+  }
+
+  // Create a custom quote
+  async createCustomQuote(
+    quoteData: CustomQuote
+  ): Promise<CustomQuoteResponse> {
+    try {
+      // In a real implementation, you would:
+      // 1. Insert the quote data into the database
+      // 2. Return the created record with ID
+
+      const newQuote: CustomQuoteResponse = {
+        id: Date.now(), // Simulate auto-generated ID
+        type: QUOTE_TYPES.CUSTOM,
+        productDetails: quoteData.productDetails,
+        hasReferencePrice: quoteData.hasReferencePrice,
+        contactInfo: quoteData.contactInfo,
+        comments: quoteData.comments,
+        createdAt: new Date().toISOString(),
+        ...(quoteData.fullName && { fullName: quoteData.fullName }),
+        ...(quoteData.companyName && {
+          companyName: quoteData.companyName,
+        }),
+        ...(quoteData.cuilCuit && { cuilCuit: quoteData.cuilCuit }),
+        ...(quoteData.address && { address: quoteData.address }),
+        ...(quoteData.referencePriceDescription && {
+          referencePriceDescription: quoteData.referencePriceDescription,
+        }),
+        ...(quoteData.referencePriceFileURL && {
+          referencePriceFileURL: quoteData.referencePriceFileURL,
+        }),
+        ...(quoteData.paymentMethod && {
+          paymentMethod: quoteData.paymentMethod,
+        }),
+      };
+
+      // TODO: Remove this after the database is implemented
+      mockCustomQuotes.push(newQuote);
+
+      console.log("Custom quote created:", newQuote);
+      return newQuote;
+    } catch (error) {
+      console.error("Failed to create custom quote:", error);
+      throw error;
+    }
+  }
+
   // Update catalog quote
   async updateCatalogQuote(
     id: number,
-    quoteData: unknown
+    quoteData: Partial<CatalogQuote>
   ): Promise<CatalogQuoteResponse | null> {
     try {
-      // Validate update data using Zod
-      const validatedData = this.validateQuoteUpdate(quoteData);
-
       // In a real implementation, you would:
       // 1. Check if the quote exists and is a catalog quote
       // 2. Update the quote in the database
@@ -185,7 +171,7 @@ export class QuoteModel extends BaseModel<QuoteResponse> {
 
       const updatedQuote = {
         ...existingQuote,
-        ...validatedData,
+        ...quoteData,
         updatedAt: new Date().toISOString(),
       } as CatalogQuoteResponse;
 
@@ -205,12 +191,9 @@ export class QuoteModel extends BaseModel<QuoteResponse> {
   // Update custom quote
   async updateCustomQuote(
     id: number,
-    quoteData: unknown
+    quoteData: Partial<CustomQuote>
   ): Promise<CustomQuoteResponse | null> {
     try {
-      // Validate update data using Zod
-      const validatedData = this.validateQuoteUpdate(quoteData);
-
       // In a real implementation, you would:
       // 1. Check if the quote exists and is a custom quote
       // 2. Update the quote in the database
@@ -223,7 +206,7 @@ export class QuoteModel extends BaseModel<QuoteResponse> {
 
       const updatedQuote = {
         ...existingQuote,
-        ...validatedData,
+        ...quoteData,
         updatedAt: new Date().toISOString(),
       } as CustomQuoteResponse;
 
@@ -262,51 +245,6 @@ export class QuoteModel extends BaseModel<QuoteResponse> {
     } catch (error) {
       console.error("Failed to delete quote:", error);
       throw new Error("Failed to delete quote");
-    }
-  }
-
-  // Validation methods using Zod
-  private validateCatalogQuote(quoteData: unknown): CatalogQuoteInput {
-    try {
-      return validateCatalogQuote(quoteData);
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`Catalog quote validation failed: ${error.message}`);
-      }
-      throw new Error("Catalog quote validation failed");
-    }
-  }
-
-  private validateCustomQuote(quoteData: unknown): CustomQuoteInput {
-    try {
-      return validateCustomQuote(quoteData);
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`Custom quote validation failed: ${error.message}`);
-      }
-      throw new Error("Custom quote validation failed");
-    }
-  }
-
-  private validateQuoteFilters(filters: unknown): QuoteFiltersInput {
-    try {
-      return validateQuoteFilters(filters);
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`Quote filters validation failed: ${error.message}`);
-      }
-      throw new Error("Quote filters validation failed");
-    }
-  }
-
-  private validateQuoteUpdate(updateData: unknown): QuoteUpdateInput {
-    try {
-      return validateQuoteUpdate(updateData);
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new Error(`Quote update validation failed: ${error.message}`);
-      }
-      throw new Error("Quote update validation failed");
     }
   }
 }

@@ -13,6 +13,12 @@ COPY package*.json ./
 # Install all dependencies (including dev dependencies for TypeScript compilation)
 RUN npm ci --include=dev
 
+# Copy Prisma schema
+COPY prisma ./prisma
+
+# Generate Prisma client in the correct location
+RUN npx prisma generate --schema=./prisma/schema.prisma
+
 # Create a non-root user to run the application
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S nodejs -u 1001

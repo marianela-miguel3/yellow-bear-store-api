@@ -203,7 +203,14 @@ yellow-bear-store-api/
 ├── .gitignore             # Git ignore rules
 ├── env.example            # Environment variables template
 ├── README.md              # This file
-└── API.md                 # Detailed API documentation
+└── docs/                  # Documentation folder
+    ├── README.md          # Documentation index
+    ├── API.md             # Detailed API documentation
+    ├── DOCKER_DEV_SETUP.md # Docker development guide
+    ├── SWAGGER_SETUP.md   # Swagger documentation guide
+    ├── CLEAN_COMMANDS.md  # Clean commands guide
+    ├── SECURITY_SETUP.md  # Security setup guide
+    └── DATABASE_MIGRATIONS.md # Database migrations guide
 ```
 
 ## 🏗️ Architecture
@@ -267,6 +274,18 @@ To add new features (e.g., users, products):
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 📚 Documentation
+
+For detailed documentation and guides, check the [docs/](./docs/) folder:
+
+- **[📖 Documentation Index](./docs/README.md)** - Overview of all available documentation
+- **[🔌 API Reference](./docs/API.md)** - Complete API documentation with endpoints and examples
+- **[🐳 Docker Development](./docs/DOCKER_DEV_SETUP.md)** - Setting up the development environment
+- **[📊 Swagger Setup](./docs/SWAGGER_SETUP.md)** - Using the interactive API documentation
+- **[🧹 Clean Commands](./docs/CLEAN_COMMANDS.md)** - Maintenance and troubleshooting commands
+- **[🔒 Security Setup](./docs/SECURITY_SETUP.md)** - Security best practices and configuration
+- **[🗄️ Database Migrations](./docs/DATABASE_MIGRATIONS.md)** - Prisma migrations and database management
 
 ## 🆘 Support
 
